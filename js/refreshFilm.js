@@ -21,7 +21,7 @@ function startSetInfo(){
 }
 
 function request(callback) {
-  let url = "https://jscp-diplom.tw1.ru/"; // URL для обращения
+  let url = "https://jscp-diplom.netoserver.ru/"; // URL для обращения
   var data = "event=update"; // Данные которые передаём
   let info = null; // объект который получим
   var xhr = new XMLHttpRequest();
@@ -117,7 +117,7 @@ function setFilms(info,date) {// принимает информацию кот�
           
 
           refHall.onclick = function () {//функция клика на тег а (т.е время для конкретного зала и фильма)
-            let url = "https://jscp-diplom.tw1.ru/ "; // URL для обращения
+            let url = "https://jscp-diplom.netoserver.ru/"; // URL для обращения
             var data = `event=get_hallConfig&timestamp=${refHall.getAttribute("data-seance-timestamp")}&hallId=${refHall.getAttribute("data-hall-id")}&seanceId=${refHall.getAttribute("data-seance-id")}`; // Данные которые передаём
             let hallInfo = null; // объект который получим
             var xhr = new XMLHttpRequest();

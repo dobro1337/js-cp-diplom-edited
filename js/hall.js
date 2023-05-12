@@ -95,7 +95,7 @@ buyButton.onclick = function () { // отправляем выбранное м�
 
     sessionStorage.setItem(sessionStorage.getItem("data-seance-id"),JSON.stringify(saveCurrentBuy));// сохраняем
 
-    let url = "https://jscp-diplom.tw1.ru/ "; // URL для обращения
+    let url = "https://jscp-diplom.netoserver.ru/"; // URL для обращения
     var data = `event=sale_add&timestamp=${sessionStorage.getItem("data-seance-timestamp")}&hallId=${sessionStorage.getItem("data-hall-id")}&seanceId=${sessionStorage.getItem("data-seance-id")}&hallConfiguration=${wrapper.innerHTML}`;
     var xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);
