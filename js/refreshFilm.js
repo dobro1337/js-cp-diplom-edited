@@ -1,13 +1,11 @@
-function handleInfo(info) {//колбек для ответа с сервера
-  console.log(info);
-  localStorage.setItem('info', JSON.stringify(info));// сохранили информацию с сервера
-  localStorage.setItem('date',new Date());// записали дату сохранения
-  setFilms(info,selectDay); // устанавливаем фильмы
-}
-
 function startSetInfo(){
   if (!localStorage.length) {  // если файлов нет , обращаемся на сервер
-    request(handleInfo);
+    request((info) => {
+      console.log(info);
+      localStorage.setItem('info', info);// сохранили информацию с сервера
+      localStorage.setItem('date',new Date());// записали дату сохранения
+      setFilms(JSON.parse(info),selectDay); // устанавливаем фильмы
+    },"event=update");
  }
  else {
    let date = new Date(localStorage.getItem("date"));// получили дату сохранения файлов
@@ -15,32 +13,9 @@ function startSetInfo(){
      let info = JSON.parse(localStorage.getItem("info"));// переводим в объект и устанавливаем фильмы
      setFilms(info,selectDay);
    }else { // делаем запрос т.к. файлы устарели
-     request(handleInfo);
+     request(handleInfo,"event=update");
    }
  }
-}
-
-function request(callback) {
-  let url = "https://jscp-diplom.netoserver.ru/"; // URL для обращения
-  var data = "event=update"; // Данные которые передаём
-  let info = null; // объект который получим
-  var xhr = new XMLHttpRequest();
-  xhr.open("POST", url, false);
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); 
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState === XMLHttpRequest.DONE) {
-      if (xhr.status === 200) {
-        info = JSON.parse(xhr.responseText);
-        callback(info);
-      } 
-      else {
-        alert("Ошибка: " + xhr.status);
-        info = defaultAnswer;
-        callback(info);
-      }
-    }
-  };
-  xhr.send(data);
 }
 
 function setFilms(info,date) {// принимает информацию которая приходит с сервера 1 запросом либо из localStroage, date - конкретный день и последующие дни , является Date. 
@@ -115,36 +90,18 @@ function setFilms(info,date) {// принимает информацию кот�
           refHall.setAttribute('data-seance-start', currSeance.seance_start);//Время начала сеанса
           refHall.setAttribute('data-seance-timestamp', toSecond(currSeance.seance_time,date));//timestamp
           
+          let data = `event=get_hallConfig&timestamp=${refHall.getAttribute("data-seance-timestamp")}&hallId=${refHall.getAttribute("data-hall-id")}&seanceId=${refHall.getAttribute("data-seance-id")}`;
+          refHall.onclick = function(){
+            request((hallInfo)=> {
+              sessionStorage.setItem("hallInfo",hallInfo);
+              sessionStorage.setItem("hall_config",currHall.hall_config);// сохраняем конфиг зала если в hallInfo null
 
-          refHall.onclick = function () {//функция клика на тег а (т.е время для конкретного зала и фильма)
-            let url = "https://jscp-diplom.netoserver.ru/"; // URL для обращения
-            var data = `event=get_hallConfig&timestamp=${refHall.getAttribute("data-seance-timestamp")}&hallId=${refHall.getAttribute("data-hall-id")}&seanceId=${refHall.getAttribute("data-seance-id")}`; // Данные которые передаём
-            let hallInfo = null; // объект который получим
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", url, true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); 
-            xhr.onreadystatechange = function() {
-              if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                  hallInfo = xhr.responseText;// если есть уже забронированные места на этот сеанс, сервер присылает разметку , иначе "null"
-                  sessionStorage.setItem("hallInfo",hallInfo);
-                  sessionStorage.setItem("hall_config",currHall.hall_config);// сохраняем конфиг зала если в hallInfo null
-
-                  for (let i = 0; i < refHall.attributes.length; i++) {
-                    const attribute = refHall.attributes[i];
-                    sessionStorage.setItem(attribute.name,attribute.value);// сохраняем все атрибуты, которые находятся в теге а, что бы передать их на след. страницу 
-                  }
-                  window.location.href = "hall.html";// переходим на след стр 
-                } 
-                else {
-                  alert("Ошибка: " + xhr.status);
-                  sessionStorage.setItem("hallInfo","null");
-                  sessionStorage.setItem("hall_config",currHall.hall_config);
-                  window.location.href = "hall.html";// всё равно переходим на след страницу , только предупреждаем что сломалось 
-                }
+              for (let i = 0; i < refHall.attributes.length; i++) {
+                const attribute = refHall.attributes[i];
+                sessionStorage.setItem(attribute.name,attribute.value);// сохраняем все атрибуты, которые находятся в теге а, что бы передать их на след. страницу 
               }
-            };
-            xhr.send(data);
+              window.location.href = "hall.html";// переходим на след стр 
+            },data);
             return false;
           }
           ul.appendChild(newTime);//добавляем новый li

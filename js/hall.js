@@ -95,28 +95,15 @@ buyButton.onclick = function () { // отправляем выбранное м�
 
     sessionStorage.setItem(sessionStorage.getItem("data-seance-id"),JSON.stringify(saveCurrentBuy));// сохраняем
 
-    let url = "https://jscp-diplom.netoserver.ru/"; // URL для обращения
-    var data = `event=sale_add&timestamp=${sessionStorage.getItem("data-seance-timestamp")}&hallId=${sessionStorage.getItem("data-hall-id")}&seanceId=${sessionStorage.getItem("data-seance-id")}&hallConfiguration=${wrapper.innerHTML}`;
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); 
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState === XMLHttpRequest.DONE) {
-        if (xhr.status === 200) {
-          chairsSelected.forEach(e => {
-            e.classList.toggle("conf-step__chair_selected");
-            e.classList.toggle("conf-step__chair_taken");
-          })
-          sessionStorage.setItem("hallInfo",wrapper.innerHTML);
-          window.location.href = "payment.html";// переходим на след стр 
-        } 
-        else {
-          alert("Ошибка: " + xhr.status);
-          window.location.href = "payment.html";// переходим на след стр с сообщением об ошибке
-        }
-      }
-    };
-    xhr.send(data);
+    let data = `event=sale_add&timestamp=${sessionStorage.getItem("data-seance-timestamp")}&hallId=${sessionStorage.getItem("data-hall-id")}&seanceId=${sessionStorage.getItem("data-seance-id")}&hallConfiguration=${wrapper.innerHTML}`;
+    request(()=> {
+      chairsSelected.forEach(e => {
+        e.classList.toggle("conf-step__chair_selected");
+        e.classList.toggle("conf-step__chair_taken");
+        })
+      sessionStorage.setItem("hallInfo",wrapper.innerHTML);
+      window.location.href = "payment.html";// переходим на след стр 
+    },data);
   }
   else{
     alert("вы не выбрали место(а)");
