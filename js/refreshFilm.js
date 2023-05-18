@@ -81,6 +81,7 @@ function setFilms(info,date) {// принимает информацию кот�
           let newTime = li.cloneNode(true);
           let refHall =  newTime.children[0]; // тег а , от перечисления
 
+          refHall.classList.remove("acceptin-button-disabled");//удаляем класс отключенной кнопки
           refHall.textContent = time;// Устанавливаем всю необходимую информацию в атрибуты тега а
           refHall.setAttribute('data-film-id', element.film_id);// id фильма
           refHall.setAttribute('data-film-name', element.film_name);// название фильма
@@ -92,7 +93,7 @@ function setFilms(info,date) {// принимает информацию кот�
           refHall.setAttribute('data-seance-time', currSeance.seance_time);//время сеанса
           refHall.setAttribute('data-seance-start', currSeance.seance_start);//Время начала сеанса
           refHall.setAttribute('data-seance-timestamp', toSecond(currSeance.seance_time,date));//timestamp
-          
+
           let data = `event=get_hallConfig&timestamp=${refHall.getAttribute("data-seance-timestamp")}&hallId=${refHall.getAttribute("data-hall-id")}&seanceId=${refHall.getAttribute("data-seance-id")}`;
           refHall.onclick = function(){
             request((hallInfo)=> {
@@ -129,3 +130,21 @@ function declension(number, titles) { // игра слов... минута, ми
 }
 
 startSetInfo();
+
+setInterval(()=>{ // каждую секунду проверяем сеанс и обновляем текущее время
+  currentDate = new Date();
+  console.log(currentDate);
+  let acceptinButton = Array.from(document.getElementsByClassName("movie-seances__time"));
+  acceptinButton.forEach(e => {
+    if(selectDay.getDate() === currentDate.getDate()) {  // выключаем сеансы, которые уже прошли
+      let timeSeance = Number(e.getAttribute("data-seance-timestamp"));// время сеанса в секундах
+      let currentTime = Math.floor(currentDate.getTime()/1000);// текущее время в секундах
+       if(timeSeance < currentTime){
+        e.classList.add("acceptin-button-disabled");
+       }
+       else {
+        e.classList.remove("acceptin-button-disabled");//удаляем класс отключенной кнопки
+      }
+    }
+  }) 
+},1000)

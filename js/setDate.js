@@ -41,7 +41,7 @@ days.forEach(element => { // дата на следующие дни
   }
 })
 
-const currentDate = new Date();// текущая дата
+let currentDate = new Date();// текущая дата
 let selectDay = new Date();// день который выбрали 
 let navDay = document.getElementsByClassName("page-nav")[0];
 navDay.getElementsByClassName("page-nav__day_chosen")[0].classList.toggle("page-nav__day_chosen");// выключаем выбранный день по умолчанию 
