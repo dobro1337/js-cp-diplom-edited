@@ -133,7 +133,6 @@ startSetInfo();
 
 setInterval(()=>{ // каждую секунду проверяем сеанс и обновляем текущее время
   currentDate = new Date();
-  console.log(currentDate);
   let acceptinButton = Array.from(document.getElementsByClassName("movie-seances__time"));
   acceptinButton.forEach(e => {
     if(selectDay.getDate() === currentDate.getDate()) {  // выключаем сеансы, которые уже прошли
