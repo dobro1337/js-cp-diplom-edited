@@ -1,7 +1,6 @@
 function startSetInfo(){
   if (!localStorage.length) {  // если файлов нет , обращаемся на сервер
     request((info) => {
-      console.log(info);
       localStorage.setItem('info', info);// сохранили информацию с сервера
       localStorage.setItem('date',new Date());// записали дату сохранения
       setFilms(JSON.parse(info),selectDay); // устанавливаем фильмы
@@ -13,7 +12,11 @@ function startSetInfo(){
      let info = JSON.parse(localStorage.getItem("info"));// переводим в объект и устанавливаем фильмы
      setFilms(info,selectDay);
    }else { // делаем запрос т.к. файлы устарели
-     request(handleInfo,"event=update");
+      request((info) => {
+        localStorage.setItem('info', info);// сохранили информацию с сервера
+        localStorage.setItem('date',new Date());// записали дату сохранения
+        setFilms(JSON.parse(info),selectDay); // устанавливаем фильмы
+      },"event=update");
    }
  }
 }
