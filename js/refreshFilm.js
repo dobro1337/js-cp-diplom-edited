@@ -94,6 +94,14 @@ function setFilms(info,date) {// принимает информацию кот�
           refHall.setAttribute('data-seance-start', currSeance.seance_start);//Время начала сеанса
           refHall.setAttribute('data-seance-timestamp', toSecond(currSeance.seance_time,date));//timestamp
 
+          if(selectDay.getDate() === currentDate.getDate()) {  // выключаем сеансы, которые уже прошли
+            let timeSeance = Number(refHall.getAttribute("data-seance-timestamp"));// время сеанса в секундах
+            let currentTime = Math.floor(currentDate.getTime()/1000);// текущее время в секундах
+            if(timeSeance < currentTime){
+              refHall.classList.add("acceptin-button-disabled");
+            }
+          }
+
           let data = `event=get_hallConfig&timestamp=${refHall.getAttribute("data-seance-timestamp")}&hallId=${refHall.getAttribute("data-hall-id")}&seanceId=${refHall.getAttribute("data-seance-id")}`;
           refHall.onclick = function(){
             request((hallInfo)=> {
